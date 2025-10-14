@@ -1,0 +1,19 @@
+import LoginForm from "../components/LoginForm";
+import Logo from "../assets/Logo.png";
+
+const LoginPage = () => {
+  return (
+    <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-4 sm:p-6 lg:p-8">
+      <div className="w-full max-w-lg text-center">
+        <img src={Logo} alt="Logo" className="mx-auto h-25" />
+
+        <h1 className="text-4xl sm:text-5xl font-extrabold text-gray-900 mb-6">
+          Iniciar Sesión
+        </h1>
+        <LoginForm />
+      </div>
+    </div>
+  );
+};
+
+export default LoginPage;
