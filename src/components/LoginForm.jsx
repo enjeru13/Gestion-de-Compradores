@@ -54,13 +54,13 @@ const LoginForm = () => {
       <div className="mb-6">
         <label
           htmlFor="username"
-          className="block text-gray-700 text-sm font-semibold mb-2"
+          className="block text-gray-700 text-left text-sm font-semibold mb-2"
         >
           Usuario:
         </label>
         <div className="relative">
           <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
-            <UserLock color="black" size={20} />
+            <UserLock color="green" size={20} />
           </span>
           <input
             type="text"
@@ -78,13 +78,13 @@ const LoginForm = () => {
       <div className="mb-8">
         <label
           htmlFor="password"
-          className="block text-gray-700 text-sm font-semibold mb-2"
+          className="block text-gray-700 text-left text-sm font-semibold mb-2"
         >
           Contraseña:
         </label>
         <div className="relative">
           <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
-            <Lock color="black" size={20} />
+            <Lock color="green" size={20} />
           </span>
           <input
             type="password"
