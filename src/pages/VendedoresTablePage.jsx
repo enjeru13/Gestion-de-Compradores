@@ -18,9 +18,14 @@ function getEstadoVisita(cantidad) {
 }
 
 function getEstadoVisitaTotales(cantidadTot) {
-  if (cantidadTot >= 90) return { texto: "Cumplido", clase: "text-green-800" };
-  if (cantidadTot >= 72) return { texto: "Regular", clase: "text-yellow-800" };
-  return { texto: "Bajo de lo esperado", clase: "text-red-800" };
+  if (cantidadTot >= 90)
+    return { texto: "Cumplido", clase: "text-green-800 dark:text-green-400" };
+  if (cantidadTot >= 72)
+    return { texto: "Regular", clase: "text-yellow-800 dark:text-yellow-400" };
+  return {
+    texto: "Bajo de lo esperado",
+    clase: "text-red-800 dark:text-red-400",
+  };
 }
 
 function getHorasLaboradas(horasObj) {
@@ -154,29 +159,29 @@ const VendedoresTablePage = () => {
   };
 
   return (
-    <div className="p-4 sm:p-6 lg:p-1 min-h-screen">
+    <div className="p-4 sm:p-6 lg:p-1 bg-white dark:bg-gray-800 min-h-screen">
       {/* Filtro de mes y año */}
-      <h2 className="text-3xl text-center font-bold mb-6 text-gray-800">
+      <h2 className="text-3xl text-center font-bold mb-6 text-gray-800 dark:text-white">
         Tabla de Vendedores
       </h2>
-      <div className="flex flex-col sm:flex-row gap-4 mb-6 bg-white p-4 rounded-md shadow-sm border border-gray-200">
+      <div className="flex flex-col sm:flex-row gap-4 mb-6 bg-white dark:bg-gray-700 p-4 rounded-md shadow-sm border border-gray-200 dark:border-gray-600">
         <label className="flex items-center space-x-2 text-gray-700">
-          <span className="font-medium">Año:</span>
+          <span className="font-medium dark:text-white">Año:</span>
           <input
             type="number"
             min="2000"
             max="2100"
             value={anio}
             onChange={(e) => setAnio(Number(e.target.value))}
-            className="w-24 p-2 border border-gray-300 rounded-md focus:ring-green-500 focus:border-green-500 transition-colors"
+            className="w-24 p-2 border border-gray-300 dark:border-gray-600 dark:text-white rounded-md focus:ring-green-500 focus:border-green-500 transition-colors"
           />
         </label>
         <label className="flex items-center space-x-2 text-gray-700">
-          <span className="font-medium">Mes:</span>
+          <span className="font-medium dark:text-white">Mes:</span>
           <select
             value={mes}
             onChange={(e) => setMes(Number(e.target.value))}
-            className="p-2 border border-gray-300 rounded-md focus:ring-green-500 focus:border-green-500 transition-colors"
+            className="p-2 border border-gray-300 dark:border-gray-600 dark:text-white rounded-md focus:ring-green-500 focus:border-green-500 transition-colors"
           >
             {[...Array(12)].map((_, i) => (
               <option key={i + 1} value={i + 1}>
@@ -188,18 +193,18 @@ const VendedoresTablePage = () => {
       </div>
 
       {loading ? (
-        <p className="text-center text-gray-500 text-lg py-10">
+        <p className="text-center text-gray-400 text-lg py-10">
           Cargando datos...
         </p>
       ) : (
-        <div className="bg-white rounded-lg shadow-md border border-gray-200">
+        <div className="bg-white dark:bg-gray-600 rounded-lg shadow-md border border-gray-200 dark:border-gray-600">
           <div className="overflow-x-auto">
             <div className="max-h-[900px] overflow-y-auto">
               <table className="min-w-full table-fixed divide-y divide-gray-200">
-                <thead className="bg-gray-50 sticky top-0 z-10">
+                <thead className="bg-gray-50 dark:border-gray-600 sticky top-0 z-10">
                   <tr>
                     <th
-                      className="px-6 py-3 w-10 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-r border-gray-200"
+                      className="px-6 py-3 w-10 text-left text-xs font-medium text-gray-500 dark:bg-gray-700 dark:text-white uppercase tracking-wider border-r border-gray-200 dark:border-gray-600"
                       rowSpan={2}
                     >
                       Vendedor
@@ -209,7 +214,7 @@ const VendedoresTablePage = () => {
                         key={i}
                         data-semana-id={i}
                         colSpan={semanasAbiertas[i] ? semana.length * 2 : 1}
-                        className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer select-none hover:bg-gray-100 transition-colors"
+                        className="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-white dark:bg-gray-700 uppercase tracking-wider cursor-pointer select-none hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"
                         onClick={() => handleSemanaClick(i)}
                       >
                         Semana {i + 1}
@@ -220,7 +225,7 @@ const VendedoresTablePage = () => {
                     ))}
                     <th
                       rowSpan={2}
-                      className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider"
+                      className="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:bg-gray-700 dark:text-white uppercase tracking-wider"
                     >
                       Promedio Horas/Día
                     </th>
@@ -237,18 +242,18 @@ const VendedoresTablePage = () => {
                           return [
                             <th
                               key={fecha + "-gestiones"}
-                              className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider border-t border-gray-200"
+                              className="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-white dark:bg-gray-700 uppercase tracking-wider border-t border-gray-200 dark:border-gray-600"
                             >
                               <span className="block">
                                 {d.getUTCDate()} {dia.toUpperCase()}
                               </span>
-                              <span className="block mt-1 font-semibold text-gray-700">
+                              <span className="block mt-1 font-semibold text-gray-700 dark:text-white">
                                 Gestiones
                               </span>
                             </th>,
                             <th
                               key={fecha + "-horas"}
-                              className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider border-t border-gray-200"
+                              className="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-white dark:bg-gray-700 uppercase tracking-wider border-t border-gray-200 dark:border-gray-600"
                             >
                               <span className="block mt-1 font-semibold text-gray-700">
                                 Horas
@@ -265,13 +270,13 @@ const VendedoresTablePage = () => {
                     )}
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody className="bg-white dark:bg-gray-700 divide-y divide-gray-200 dark:divide-gray-600">
                   {vendedores.map((v) => (
                     <tr
                       key={v.id}
-                      className="hover:bg-gray-50 transition-all duration-200"
+                      className="hover:bg-gray-50 dark:hover:bg-gray-600 transition-all duration-200"
                     >
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 border-r border-gray-200">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white border-r border-gray-200 dark:border-gray-600">
                         {v.nombre}
                       </td>
                       {semanas.map((semana, i) =>
@@ -321,14 +326,14 @@ const VendedoresTablePage = () => {
                                   <div className="text-xs mt-1">
                                     {estado.texto}
                                   </div>
-                                  <div className="text-xs mt-1 text-gray-700">
+                                  <div className="text-xs mt-1 font-semibold text-gray-700 dark:text-white">
                                     Gestiones
                                   </div>
                                 </td>
                               );
                             })()
                       )}
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-center font-bold text-gray-700">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-center font-bold text-gray-700 dark:text-white">
                         {getPromedioHorasDiarias(horasLaboradas[v.id], fechas)}{" "}
                         H
                       </td>
@@ -337,7 +342,7 @@ const VendedoresTablePage = () => {
                 </tbody>
               </table>
               {vendedores.length === 0 && !loading && (
-                <div className="p-6 text-center text-gray-500">
+                <div className="p-6 text-center text-gray-400">
                   No hay datos de vendedores para este mes.
                 </div>
               )}
