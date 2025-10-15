@@ -1,21 +1,19 @@
-import { Table } from "lucide-react";
+import { Rotate3d, Table } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 
-export default function Sidebar({ collapsed }) {
+export default function Sidebar() {
   const location = useLocation();
 
   const links = [
-    { to: "/ventas", label: "Panel de Ventas", icon: <Table /> },
-    { to: "/", label: "Panel de Ventas", icon: <Table /> },
+    { to: "/ventas", label: "Tabal de Vendedores", icon: <Table /> },
+    { to: "/guardao", label: "Panel Guardao", icon: <Rotate3d /> },
   ];
 
   return (
-    <aside
-      className={'bg-[#49af4e] text-white min-h-screen p-6 shadow-2xl sticky top-0 transition-all duration-300'}
-    >
-      {!collapsed && (
-        <div className="text-2xl font-bold mb-6 tracking-wide">Menú</div>
-      )}
+<aside
+  className="w-64 min-w-[16rem] max-w-[16rem] bg-gradient-to-b from-[#49af4e] to-[#1a9888] text-white min-h-screen py-6 px-4 shadow-2xl sticky top-0 transition-all duration-300"
+>
+      <div className="text-2xl font-bold mb-6 tracking-wide">Menú</div>
       <nav className="flex flex-col gap-4">
         {links.map(({ to, label, icon }) => {
           const isActive = location.pathname === to;
@@ -39,7 +37,7 @@ export default function Sidebar({ collapsed }) {
               >
                 {icon}
               </span>
-              {!collapsed && <span>{label}</span>}
+              <span>{label}</span>
             </Link>
           );
         })}

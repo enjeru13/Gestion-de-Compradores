@@ -3,6 +3,7 @@ import LoginPage from "../pages/LoginPage";
 import PrivateRoute from "../components/PrivateRoute";
 import MainLayout from "../components/layout/MainLayout"
 import VendedoresTablePage from "../pages/VendedoresTablePage";
+import Guardao from "../pages/guardao";
 
 const AppRoutes = () => {
   return (
@@ -20,6 +21,7 @@ const AppRoutes = () => {
         }
       >
         <Route path="/ventas" element={<VendedoresTablePage />} />
+        <Route path="/guardao" element={<Guardao />} />
       </Route>
 
       {/* Ruta para manejar páginas no encontradas */}

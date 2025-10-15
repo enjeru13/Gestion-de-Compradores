@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 
 // Funciones de utilidad (se mantienen igual)
 function agruparFechasPorSemana(fechas) {
@@ -56,7 +56,7 @@ const VendedoresTablePage = () => {
   const [anio, setAnio] = useState(new Date().getFullYear());
   const [mes, setMes] = useState(new Date().getMonth() + 1);
 
-  const scrollContainerRef = useRef(null);
+  // Se eliminan useRef y el useEffect asociado ya que las clases CSS manejan el scroll.
 
   useEffect(() => {
     setLoading(true);
@@ -148,28 +148,9 @@ const VendedoresTablePage = () => {
       [i]: !prev[i],
     }));
   };
-  
-  useEffect(() => {
-    const semanaAbiertaIndex = Object.keys(semanasAbiertas).find(
-      (key) => semanasAbiertas[key] === true
-    );
-    
-    if (semanaAbiertaIndex !== undefined && scrollContainerRef.current) {
-      const semanaHeader = scrollContainerRef.current.querySelector(
-        `[data-semana-id="${semanaAbiertaIndex}"]`
-      );
-      
-      if (semanaHeader) {
-        semanaHeader.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
-      }
-    }
-  }, [semanasAbiertas]);
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 min-h-screen">
-      <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-6 tracking-tight">
-        Tabla de Vendedores
-      </h2>
+    <div className="p-4 sm:p-6 lg:p-1 min-h-screen">
 
       {/* Filtro de mes y año */}
       <div className="flex flex-col sm:flex-row gap-4 mb-8 bg-white p-4 rounded-md shadow-sm border border-gray-200">
@@ -205,19 +186,18 @@ const VendedoresTablePage = () => {
           Cargando datos...
         </p>
       ) : (
-        <div className="overflow-x-auto max-w-full bg-white rounded-lg shadow-md border border-gray-200">
-          <div className="max-h-[700px] overflow-y-auto" ref={scrollContainerRef}>
-            <div className="min-w-[1000px] relative">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
+        <div className="bg-white rounded-lg shadow-md border border-gray-200">
+          <div className="overflow-x-auto">
+            <div className="max-h-[900px] overflow-y-auto">
+              <table className="min-w-full table-fixed divide-y divide-gray-200">
+                <thead className="bg-gray-50 sticky top-0 z-10">
                   <tr>
                     <th
-                      className="px-6 py-3 w-14 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-r border-gray-200"
+                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-r border-gray-200"
                       rowSpan={2}
                     >
                       Vendedor
                     </th>
-
                     {semanas.map((semana, i) => (
                       <th
                         key={i}

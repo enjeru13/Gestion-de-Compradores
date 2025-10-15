@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 // Funciones de utilidad (se mantienen igual, solo la presentación cambia)
 function agruparFechasPorSemana(fechas) {
@@ -46,7 +46,7 @@ function getPromedioHorasDiarias(horasLaboradasUsuario, fechas) {
   return `${horas}:${minutos.toString().padStart(2, "0")}`;
 }
 
-const VendedoresTablePage = () => {
+const Guardao = () => {
   const [vendedores, setVendedores] = useState([]);
   const [visitasPorDia, setVisitasPorDia] = useState({});
   const [loading, setLoading] = useState(true);
@@ -147,7 +147,8 @@ const VendedoresTablePage = () => {
     }));
   };
 
-  return     <div className="p-4 sm:p-6 lg:p-8 bg-gray-50 min-h-screen">
+  return (
+    <div className="p-4 sm:p-6 lg:p-8 bg-gray-50 min-h-screen">
       <h2 className="text-3xl font-bold mb-6 text-gray-800">
         Tabla de Vendedores
       </h2>
@@ -313,7 +314,8 @@ const VendedoresTablePage = () => {
           )}
         </div>
       )}
-    </div>;
+    </div>
+  );
 };
 
-export default VendedoresTablePage;
+export default Guardao;
