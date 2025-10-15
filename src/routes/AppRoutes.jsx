@@ -1,9 +1,9 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import LoginPage from "../pages/LoginPage";
 import PrivateRoute from "../components/PrivateRoute";
-import MainLayout from "../components/layout/MainLayout"
+import MainLayout from "../components/layout/MainLayout";
 import VendedoresTablePage from "../pages/VendedoresTablePage";
-import Guardao from "../pages/guardao";
+import PanelConfVendedores from "../pages/PanelConfVendedores";
 
 const AppRoutes = () => {
   return (
@@ -21,7 +21,7 @@ const AppRoutes = () => {
         }
       >
         <Route path="/ventas" element={<VendedoresTablePage />} />
-        <Route path="/guardao" element={<Guardao />} />
+        <Route path="/guardao" element={<PanelConfVendedores />} />
       </Route>
 
       {/* Ruta para manejar páginas no encontradas */}

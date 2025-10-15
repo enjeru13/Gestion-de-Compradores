@@ -6,7 +6,7 @@ export default function Navbar({
   user = null,
   onLogout = () => {},
 }) {
-  console.log(user)
+  // console.log(user)
   return (
     <header className="bg-gradient-to-r from-gray-50 to-white shadow-xl py-4 px-6 sm:px-8 flex items-center justify-between border-b border-gray-200 sticky top-0 z-50 rounded-b-xl">
       <div className="flex-1 min-w-[50px]"></div>

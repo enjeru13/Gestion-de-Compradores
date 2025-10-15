@@ -17,6 +17,12 @@ function getEstadoVisita(cantidad) {
   return { texto: "Bajo de lo esperado", clase: "bg-red-100 text-red-800" };
 }
 
+function getEstadoVisitaTotales(cantidadTot) {
+  if (cantidadTot >= 90) return { texto: "Cumplido", clase: "text-green-800" };
+  if (cantidadTot >= 72) return { texto: "Regular", clase: "text-yellow-800" };
+  return { texto: "Bajo de lo esperado", clase: "text-red-800" };
+}
+
 function getHorasLaboradas(horasObj) {
   if (!horasObj) return "0:00";
   const diffMs = horasObj.max - horasObj.min;
@@ -55,8 +61,6 @@ const VendedoresTablePage = () => {
   const [horasLaboradas, setHorasLaboradas] = useState({});
   const [anio, setAnio] = useState(new Date().getFullYear());
   const [mes, setMes] = useState(new Date().getMonth() + 1);
-
-  // Se eliminan useRef y el useEffect asociado ya que las clases CSS manejan el scroll.
 
   useEffect(() => {
     setLoading(true);
@@ -151,9 +155,11 @@ const VendedoresTablePage = () => {
 
   return (
     <div className="p-4 sm:p-6 lg:p-1 min-h-screen">
-
       {/* Filtro de mes y año */}
-      <div className="flex flex-col sm:flex-row gap-4 mb-8 bg-white p-4 rounded-md shadow-sm border border-gray-200">
+      <h2 className="text-3xl text-center font-bold mb-6 text-gray-800">
+        Tabla de Vendedores
+      </h2>
+      <div className="flex flex-col sm:flex-row gap-4 mb-6 bg-white p-4 rounded-md shadow-sm border border-gray-200">
         <label className="flex items-center space-x-2 text-gray-700">
           <span className="font-medium">Año:</span>
           <input
@@ -193,7 +199,7 @@ const VendedoresTablePage = () => {
                 <thead className="bg-gray-50 sticky top-0 z-10">
                   <tr>
                     <th
-                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-r border-gray-200"
+                      className="px-6 py-3 w-10 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-r border-gray-200"
                       rowSpan={2}
                     >
                       Vendedor
@@ -269,46 +275,58 @@ const VendedoresTablePage = () => {
                         {v.nombre}
                       </td>
                       {semanas.map((semana, i) =>
-                        semanasAbiertas[i] ? (
-                          semana.flatMap((fecha) => {
-                            const cantidad = visitasPorDia[v.id]?.[fecha] || 0;
-                            const estado = getEstadoVisita(cantidad);
-                            const horas = getHorasLaboradas(
-                              horasLaboradas[v.id]?.[fecha]
-                            );
-                            return [
-                              <td
-                                key={fecha + "-gestiones"}
-                                className={`px-6 py-4 whitespace-nowrap text-sm text-center transition-all duration-300 ease-in-out ${estado.clase}`}
-                              >
-                                <span className="font-bold">{cantidad}</span>
-                                <div className="text-xs mt-1">
-                                  {estado.texto}
-                                </div>
-                              </td>,
-                              <td
-                                key={fecha + "-horas"}
-                                className="px-6 py-4 whitespace-nowrap text-sm text-center text-gray-500 transition-all duration-300 ease-in-out"
-                              >
-                                {horas} H
-                              </td>,
-                            ];
-                          })
-                        ) : (
-                          <td
-                            key={`semana-cerrada-${i}`}
-                            className="px-6 py-4 text-center text-sm text-gray-500"
-                          >
-                            <span className="font-bold">
-                              {semana.reduce(
+                        semanasAbiertas[i]
+                          ? semana.flatMap((fecha) => {
+                              const cantidad =
+                                visitasPorDia[v.id]?.[fecha] || 0;
+                              const estado = getEstadoVisita(cantidad);
+                              const horas = getHorasLaboradas(
+                                horasLaboradas[v.id]?.[fecha]
+                              );
+                              return [
+                                <td
+                                  key={fecha + "-gestiones"}
+                                  className={`px-6 py-4 whitespace-nowrap text-sm text-center transition-all duration-300 ease-in-out ${estado.clase}`}
+                                >
+                                  <span className="font-bold">{cantidad}</span>
+                                  <div className="text-xs mt-1">
+                                    {estado.texto}
+                                  </div>
+                                </td>,
+                                <td
+                                  key={fecha + "-horas"}
+                                  className="px-6 py-4 whitespace-nowrap text-sm text-center text-gray-500 transition-all duration-300 ease-in-out"
+                                >
+                                  {horas} H
+                                </td>,
+                              ];
+                            })
+                          : (() => {
+                              const totalGestiones = semana.reduce(
                                 (sum, fecha) =>
                                   sum + (visitasPorDia[v.id]?.[fecha] || 0),
                                 0
-                              )}
-                            </span>
-                            <div className="text-xs mt-1">Gestiones</div>
-                          </td>
-                        )
+                              );
+                              const estado =
+                                getEstadoVisitaTotales(totalGestiones);
+
+                              return (
+                                <td
+                                  key={`semana-cerrada-${i}`}
+                                  className={`px-6 py-4 text-center text-sm whitespace-nowrap transition-all duration-300 ease-in-out ${estado.clase}`}
+                                >
+                                  <div className="font-bold">
+                                    {totalGestiones}
+                                  </div>
+                                  <div className="text-xs mt-1">
+                                    {estado.texto}
+                                  </div>
+                                  <div className="text-xs mt-1 text-gray-700">
+                                    Gestiones
+                                  </div>
+                                </td>
+                              );
+                            })()
                       )}
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-center font-bold text-gray-700">
                         {getPromedioHorasDiarias(horasLaboradas[v.id], fechas)}{" "}

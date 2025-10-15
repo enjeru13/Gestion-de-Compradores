@@ -21,13 +21,16 @@ const LoginForm = () => {
     e.preventDefault();
     setError("");
     try {
-      const response = await fetch("https://18.144.115.199.nip.io/api/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(credentials),
-      });
+      const response = await fetch(
+        "https://18.144.115.199.nip.io/api/auth/login",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(credentials),
+        }
+      );
       const data = await response.json();
       if (data.message === "Login exitoso" && data.token) {
         localStorage.setItem("authToken", data.token);
