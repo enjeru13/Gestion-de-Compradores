@@ -1,15 +1,30 @@
+import { useEffect } from "react";
 import AppRoutes from "./routes/AppRoutes";
+import { Moon, Sun } from "lucide-react";
 
 function App() {
-  // NOTA: El BrowserRouter debe envolver a App en main.jsx
+  // Cargar preferencia de modo oscuro al iniciar
+  useEffect(() => {
+    const modoOscuro = localStorage.getItem("modoOscuro");
+    if (modoOscuro === "true") {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  }, []);
+
+
   return (
-    <div className="App">
+    <div className="App bg-white dark:bg-gray-900 min-h-screen text-gray-900 dark:text-white transition-colors">
+
+
       <AppRoutes />
     </div>
   );
 }
 
 export default App;
+
 
 //Proyecto Auditoria de Vendedores
 
