@@ -25,7 +25,7 @@ export default function Sidebar() {
   ];
 
   return (
-    <aside className="w-64 min-w-[16rem] max-w-[16rem] bg-gradient-to-b from-[#49af4e] to-[#1a9888] text-white min-h-screen py-6 px-4 shadow-2xl sticky top-0 transition-all duration-300 flex flex-col">
+    <aside className="w-64 min-w-[14rem] max-w-[14rem] bg-gradient-to-b from-[#49af4e] to-[#1a9888] text-white min-h-screen py-6 px-4 shadow-2xl sticky top-0 transition-all duration-300 flex flex-col">
       <div className="text-2xl font-bold mb-6 tracking-wide">Menú</div>
       <nav className="flex flex-col gap-4">
         {links.map(({ to, label, icon }) => {
@@ -34,7 +34,7 @@ export default function Sidebar() {
             <Link
               key={to}
               to={to}
-              className={`flex items-center gap-4 py-3 px-4 rounded-lg transition-all duration-200 group ${
+              className={`flex space-x-2 items-center py-3 px-4 rounded-lg transition-all duration-200 group ${
                 isActive
                   ? "bg-green-700 text-white font-semibold ring-2 ring-green-300"
                   : "text-green-100 hover:bg-green-700/50 hover:text-white"

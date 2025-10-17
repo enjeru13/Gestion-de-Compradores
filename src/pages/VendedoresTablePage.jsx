@@ -1,3 +1,7 @@
+import {
+  ArrowDown,
+  ArrowRight,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 
 // Funciones de utilidad (se mantienen igual)
@@ -214,13 +218,14 @@ const VendedoresTablePage = () => {
                         key={i}
                         data-semana-id={i}
                         colSpan={semanasAbiertas[i] ? semana.length * 2 : 1}
+                        // rowSpan={2}
                         className="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-white dark:bg-gray-700 uppercase tracking-wider cursor-pointer select-none hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"
                         onClick={() => handleSemanaClick(i)}
                       >
-                        Semana {i + 1}
-                        <span className="ml-2">
-                          {semanasAbiertas[i] ? "▼" : "►"}
-                        </span>
+                        <div className="flex items-center justify-center gap-2">
+                          <span>Semana {i + 1}</span>
+                          {semanasAbiertas[i] ? <ArrowDown /> : <ArrowRight />}
+                        </div>
                       </th>
                     ))}
                     <th

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { getCampoMaximo } from "../utils/getCampoMaximo";
 
 const PanelConfVendedores = () => {
   const [vendedores, setVendedores] = useState([]);
@@ -12,18 +13,21 @@ const PanelConfVendedores = () => {
         if (v.id !== id) return v;
 
         const nuevosDias = { ...v.dias, [dia]: valor };
-        const totDias = Object.values(nuevosDias).reduce(
+        const totVisitas = Object.values(nuevosDias).reduce(
           (acc, val) => acc + val,
           0
         );
+        const comisionPorDia = v.comisionPorDiaManual
+          ? v.comisionPorDia
+          : Math.min((totVisitas / 360) * 0.5, 0.5);
 
         const total =
           v.comision +
-          v.comisionPorDia +
+          comisionPorDia +
           v.valorVehiculo +
           v.valorMeta +
           v.valorClientesAct +
-          v.valorClienteRec +
+          v.valorClientesRec +
           v.valorSku +
           v.valorGrupoNeg +
           v.clientesConve +
@@ -32,8 +36,9 @@ const PanelConfVendedores = () => {
         return {
           ...v,
           dias: nuevosDias,
-          totDias,
-          total: parseFloat(total.toFixed(2)),
+          totVisitas,
+          comisionPorDia: parseFloat(comisionPorDia.toFixed(3)),
+          total: parseFloat(Math.min(total, 3).toFixed(2)),
         };
       })
     );
@@ -46,53 +51,56 @@ const PanelConfVendedores = () => {
         if (v.id !== id) return v;
         const actualizado = { ...v, [key]: value };
 
+        if (key === "comisionPorDia") {
+          actualizado.comisionPorDiaManual = true;
+        }
+
         const total =
           actualizado.comision +
           actualizado.comisionPorDia +
           actualizado.valorVehiculo +
           actualizado.valorMeta +
           actualizado.valorClientesAct +
-          actualizado.valorClienteRec +
+          actualizado.valorClientesRec +
           actualizado.valorSku +
           actualizado.valorGrupoNeg +
           actualizado.clientesConve +
           actualizado.valorCobranza;
 
-        return { ...actualizado, total: parseFloat(total.toFixed(2)) };
+        return {
+          ...actualizado,
+          total: parseFloat(Math.min(total, 3).toFixed(2)),
+        };
       })
     );
   };
 
   const guardarConfiguracion = (id) => {
     const vendedor = vendedores.find((v) => v.id === id);
-    console.log("Configuración guardada:", vendedor);
-    // Aquí podrías hacer un POST a tu API para guardar
-  };
+    if (!vendedor) return;
 
-  //enviar datos
-  const enviarTodo = () => {
-    const payload = vendedores.map((v) => ({
-      id: v.id,
-      nombre: v.nombre,
-      rol: v.rol,
-      ruta: v.ruta,
-      segmento: v.segmento,
-      comision: v.comision,
-      dias: v.dias,
-      totDias: v.totDias,
-      comisionPorDia: v.comisionPorDia,
-      valorVehiculo: v.valorVehiculo,
-      valorMeta: v.valorMeta,
-      valorClientesAct: v.valorClientesAct,
-      valorClienteRec: v.valorClienteRec,
-      valorSku: v.valorSku,
-      valorGrupoNeg: v.valorGrupoNeg,
-      clientesConve: v.clientesConve,
-      valorCobranza: v.valorCobranza,
-      total: v.total,
-    }));
+    const payload = {
+      id: vendedor.id,
+      nombre: vendedor.nombre,
+      rol: vendedor.rol,
+      ruta: vendedor.ruta,
+      segmento: vendedor.segmento,
+      comision: vendedor.comision,
+      comisionPorDia: vendedor.comisionPorDia,
+      valorVehiculo: vendedor.valorVehiculo,
+      valorMeta: vendedor.valorMeta,
+      valorClientesAct: vendedor.valorClientesAct,
+      valorClientesRec: vendedor.valorClientesRec,
+      valorSku: vendedor.valorSku,
+      valorGrupoNeg: vendedor.valorGrupoNeg,
+      clientesConve: vendedor.clientesConve,
+      valorCobranza: vendedor.valorCobranza,
+      dias: vendedor.dias,
+      totVisitas: vendedor.totVisitas,
+      total: vendedor.total,
+    };
 
-    console.log(JSON.stringify(payload, null, 2));
+    console.log("Configuración individual:", JSON.stringify(payload, null, 2));
   };
 
   //Segmentos
@@ -135,14 +143,14 @@ const PanelConfVendedores = () => {
             Jueves: 0,
             Viernes: 0,
             Sábado: 0,
-            Domingo: 0,
           },
-          totDias: 0,
+          totVisitas: 0,
+          comisionPorDiaManual: false,
           comisionPorDia: 0,
           valorVehiculo: 0,
           valorMeta: 0,
           valorClientesAct: 0,
-          valorClienteRec: 0,
+          valorClientesRec: 0,
           valorSku: 0,
           valorGrupoNeg: 0,
           clientesConve: 0,
@@ -190,7 +198,7 @@ const PanelConfVendedores = () => {
                     <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                       Comisión Base
                     </th>
-                    <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                    <th className="px-35 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                       Dias
                     </th>
                     <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
@@ -294,12 +302,12 @@ const PanelConfVendedores = () => {
                       </td>
 
                       {/* Comisión base */}
-                      <td className="px-6 py-4 text-sm text-center">
+                      <td className="py-4 text-sm text-center">
                         <input
                           type="number"
                           min={0}
-                          max={3}
-                          step={0.1}
+                          max={getCampoMaximo(v, "comision")}
+                          step={0.01}
                           value={v.comision}
                           onChange={(e) =>
                             handleChange(
@@ -314,9 +322,10 @@ const PanelConfVendedores = () => {
                           %
                         </span>
                       </td>
-                      {/* Dias de la semana */}
-                      <td className="px-6 py-4 text-sm text-center">
-                        <div className="grid grid-cols-2 gap-1">
+
+                      {/* Días de la semana */}
+                      <td className="px-10 py-4 text-sm text-center align-top">
+                        <div className="grid grid-cols-3 gap-2">
                           {[
                             "Lunes",
                             "Martes",
@@ -324,13 +333,12 @@ const PanelConfVendedores = () => {
                             "Jueves",
                             "Viernes",
                             "Sábado",
-                            "Domingo",
                           ].map((dia) => (
                             <div
                               key={dia}
-                              className="flex items-center justify-between"
+                              className="flex flex-col items-center"
                             >
-                              <label className="text-xs text-gray-500 dark:text-gray-300">
+                              <label className="text-[10px] text-gray-500 dark:text-gray-300 mb-1">
                                 {dia.slice(0, 3)}
                               </label>
                               <input
@@ -344,26 +352,26 @@ const PanelConfVendedores = () => {
                                     parseInt(e.target.value) || 0
                                   )
                                 }
-                                className="w-12 p-1 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white rounded text-center"
+                                className="w-14 p-1 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white rounded text-center text-xs"
                               />
                             </div>
                           ))}
                         </div>
                       </td>
 
-                      {/* Comisión por dia */}
-                      <td className="px-6 py-4 text-sm text-center">
+                      {/* Comisión por día */}
+                      <td className="py-4 text-sm text-center">
                         <input
                           type="number"
                           min={0}
-                          max={0.5}
-                          step={0.1}
+                          max={getCampoMaximo(v, "comisionPorDia")}
+                          step={0.01}
                           value={v.comisionPorDia}
                           onChange={(e) =>
                             handleChange(
                               v.id,
                               "comisionPorDia",
-                              parseFloat(e.target.value)
+                              parseFloat(e.target.value) || 0
                             )
                           }
                           className="w-20 p-1 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white rounded text-center"
@@ -374,12 +382,12 @@ const PanelConfVendedores = () => {
                       </td>
 
                       {/* Comisión por vehiculo */}
-                      <td className="px-6 py-4 text-sm text-center">
+                      <td className="py-4 text-sm text-center">
                         <input
                           type="number"
                           min={0}
-                          max={0.35}
-                          step={0.1}
+                          max={getCampoMaximo(v, "valorVehiculo")}
+                          step={0.01}
                           value={v.valorVehiculo}
                           onChange={(e) =>
                             handleChange(
@@ -396,12 +404,12 @@ const PanelConfVendedores = () => {
                       </td>
 
                       {/* Comisión por meta */}
-                      <td className="px-6 py-4 text-sm text-center">
+                      <td className="py-4 text-sm text-center">
                         <input
                           type="number"
                           min={0}
-                          max={0.25}
-                          step={0.1}
+                          max={getCampoMaximo(v, "valorMeta")}
+                          step={0.01}
                           value={v.valorMeta}
                           onChange={(e) =>
                             handleChange(
@@ -418,12 +426,12 @@ const PanelConfVendedores = () => {
                       </td>
 
                       {/* Comisión por clientes activos */}
-                      <td className="px-6 py-4 text-sm text-center">
+                      <td className="py-4 text-sm text-center">
                         <input
                           type="number"
                           min={0}
-                          max={0.4}
-                          step={0.1}
+                          max={getCampoMaximo(v, "valorClientesAct")}
+                          step={0.01}
                           value={v.valorClientesAct}
                           onChange={(e) =>
                             handleChange(
@@ -440,17 +448,17 @@ const PanelConfVendedores = () => {
                       </td>
 
                       {/* Comisión por clientes recuperados */}
-                      <td className="px-6 py-4 text-sm text-center">
+                      <td className="py-4 text-sm text-center">
                         <input
                           type="number"
                           min={0}
-                          max={0}
-                          step={0.1}
-                          value={v.valorClienteRec}
+                          max={getCampoMaximo(v, "valorClientesRec")}
+                          step={0.01}
+                          value={v.valorClientesRec}
                           onChange={(e) =>
                             handleChange(
                               v.id,
-                              "valorClienteRec",
+                              "valorClientesRec",
                               parseFloat(e.target.value)
                             )
                           }
@@ -462,12 +470,12 @@ const PanelConfVendedores = () => {
                       </td>
 
                       {/* Comisión sku promedio */}
-                      <td className="px-6 py-4 text-sm text-center">
+                      <td className="py-4 text-sm text-center">
                         <input
                           type="number"
                           min={0}
-                          max={0}
-                          step={0.1}
+                          max={getCampoMaximo(v, "valorSku")}
+                          step={0.01}
                           value={v.valorSku}
                           onChange={(e) =>
                             handleChange(
@@ -484,12 +492,12 @@ const PanelConfVendedores = () => {
                       </td>
 
                       {/* Comisión valor grupo de negociaciones */}
-                      <td className="px-6 py-4 text-sm text-center">
+                      <td className="py-4 text-sm text-center">
                         <input
                           type="number"
                           min={0}
-                          max={0.5}
-                          step={0.1}
+                          max={getCampoMaximo(v, "valorGrupoNeg")}
+                          step={0.01}
                           value={v.valorGrupoNeg}
                           onChange={(e) =>
                             handleChange(
@@ -506,12 +514,12 @@ const PanelConfVendedores = () => {
                       </td>
 
                       {/* Comisión por convenios */}
-                      <td className="px-6 py-4 text-sm text-center">
+                      <td className="py-4 text-sm text-center">
                         <input
                           type="number"
                           min={0}
-                          max={0}
-                          step={0.1}
+                          max={getCampoMaximo(v, "clientesConve")}
+                          step={0.01}
                           value={v.clientesConve}
                           onChange={(e) =>
                             handleChange(
@@ -528,12 +536,12 @@ const PanelConfVendedores = () => {
                       </td>
 
                       {/* valor de cobranza */}
-                      <td className="px-6 py-4 text-sm text-center">
+                      <td className="py-4 text-sm text-center">
                         <input
                           type="number"
                           min={0}
-                          max={0}
-                          step={0.1}
+                          max={getCampoMaximo(v, "valorCobranza")}
+                          step={0.01}
                           value={v.valorCobranza}
                           onChange={(e) =>
                             handleChange(
@@ -550,12 +558,10 @@ const PanelConfVendedores = () => {
                       </td>
 
                       {/* comision total */}
-                      <td className="px-6 py-4 text-sm text-center">
-                        {v.total}%
-                      </td>
+                      <td className="py-4 text-sm text-center">{v.total}%</td>
 
                       {/* Botón de guardar */}
-                      <td className="px-6 py-4 text-sm text-center">
+                      <td className="py-4 text-sm text-center">
                         <button
                           onClick={() => guardarConfiguracion(v.id)}
                           className="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 transition"
@@ -573,14 +579,6 @@ const PanelConfVendedores = () => {
                   No hay datos de vendedores.
                 </div>
               )}
-            </div>
-            <div className="text-center my-6">
-              <button
-                onClick={enviarTodo}
-                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
-              >
-                Enviar configuración completa
-              </button>
             </div>
           </div>
         </div>
